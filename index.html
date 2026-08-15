@@ -6,42 +6,24 @@
     <title>trigOwOmetry</title>
     <link rel="stylesheet" href="styles.css" >
 </head>
-<body id="HTML_body" style="font-family:Calibri, Consolas, 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;background-color: black;">
+<body id="HTML_body" style="font-family:Calibri, Consolas, 'Gill Sans', 'Gill Sans MT', 'Trebuchet MS', sans-serif;">
     <div class="centerRow">
         <canvas id="kanvas" width="800" height="800"></canvas>
     </div>
     <div style="height: 80px;"></div>
     <div class="centerRow">
         <div class="settingsBox" style="width:125px;height:150px;color:white;">
-            <font style="font-size:25px;">lines </font><br>
+            <font style="font-size:25px;">toggles </font><br>
             <br>
-            <input type="checkbox" id="field_checkBox_showR_Line" checked>R<br>
-            <input type="checkbox" id="field_checkBox_showY_Line" checked>Rsinθ<br>
-            <input type="checkbox" id="field_checkBox_showX_Line" checked>Rcosθ<br>
+            <input type="checkbox" id="field_checkBox_steps_Line" checked onchange="POwO_config()">Step Chords<br>
+            <input type="checkbox" id="field_checkBox_snap" checked onchange="POwO_config()">Snapping<br>
         </div>
-        <div class="settingsBox" style="width:125px;height:150px;color:white;">
-            <font style="font-size:25px;">tags </font><br>
+        <div class="settingsBox" style="width:250px;height:150px;color:white;">
+            <font style="font-size:25px;">configs </font><br>
             <br>
-            <input type="checkbox" id="field_checkBox_showR_Tag" checked>R = 1<br>
-            <input type="checkbox" id="field_checkBox_showY_Tag" checked>Rsinθ<br>
-            <input type="checkbox" id="field_checkBox_showX_Tag" checked>Rcosθ<br>
-        </div>
-        <div class="settingsBox" style="width:125px;height:150px;color:white;">
-            <font style="font-size:25px;">angles </font><br>
-            <br>
-            <input type="checkbox" id="field_checkBox_showAngle_Total" checked>Total Angle<br>
-            <input type="checkbox" id="field_checkBox_showAngle_Acute" checked>Acute Angle<br>
-        </div>
-        <div class="settingsBox" style="width:125px;height:150px;color:white;">
-            <font style="font-size:25px;">other</font><br>
-            <br>
-            <input type="checkbox" id="field_checkBox_snap">snap<br>
-        </div>
-        <div class="settingsBox" style="width:125px;height:150px;color:white;">
-            <font style="font-size:25px;">calculations </font><br>
-            <br>
-            Radius : <input type="number" id="field_textBox_Radius" inputmode="numeric" pattern="[0-9]*" style="width:80px" value="1"><br>
-            Rtanθ : <font id="field_text_tanθ"></font><br>
+            Modulus : <input type="number" id="field_textBox_Modulus" inputmode="numeric" pattern="[0-9]*" style="width:80px" value="11" onchange="POwO_config()" ><br>
+            Mark Count : <input type="number" id="field_textBox_MarkCount" inputmode="numeric" pattern="[0-9]*" style="width:80px" value="11" onchange="POwO_config()"><br>
+            
         </div>
 
 

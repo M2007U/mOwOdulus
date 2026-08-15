@@ -77,31 +77,22 @@ const canvas = document.getElementById("kanvas");
 const ctx = canvas.getContext("2d");
 const HTML_Body = POwO_docgetel("HTML_body")
 
-var field_checkBox_showR_Line = POwO_docgetel("field_checkBox_showR_Line");
-var field_checkBox_showX_Line = POwO_docgetel("field_checkBox_showX_Line");
-var field_checkBox_showY_Line = POwO_docgetel("field_checkBox_showY_Line");
 
-var field_checkBox_showR_Tag = POwO_docgetel("field_checkBox_showR_Tag");
-var field_checkBox_showX_Tag = POwO_docgetel("field_checkBox_showX_Tag");
-var field_checkBox_showY_Tag = POwO_docgetel("field_checkBox_showY_Tag");
-
-var field_checkBox_showAngle_Total = POwO_docgetel("field_checkBox_showAngle_Total")
-var field_checkBox_showAngle_Acute = POwO_docgetel("field_checkBox_showAngle_Acute")
-
-var field_checkBox_snap = POwO_docgetel("field_checkBox_snap");
-
-var field_textBox_Radius = POwO_docgetel("field_textBox_Radius");
-var field_text_tanθ = POwO_docgetel("field_text_tanθ")
+var field_checkBox_steps_Line = POwO_docgetel("field_checkBox_steps_Line");
+var field_checkBox_snap = POwO_docgetel("field_checkBox_snap")
+var field_textBox_ModulusSize = POwO_docgetel("field_textBox_Modulus")
+var field_textBox_MarkCount = POwO_docgetel("field_textBox_MarkCount");
 
 var GLOBAL_RingRadius = 320
-var GLOBAL_TickMarkSize = 20
+var GLOBAL_TickMarkSize = 25
 var GLOBAL_Angle = 60/360 * 2 * Math.PI
 var GLOBAL_HandleRadius = 16
 var GLOBAL_Handle2Radius = 8
-var GLOBAL_TickMarkTextOffset = 30
+var GLOBAL_TickMarkTextOffset = 50
 
 var GLOBAL_MarkCount = 16 // how many duplicates ?
 var GLOBAL_ModulusSize = 11 
+var GLOBAL_DrawStepChord = true
 
 var GLOBAL_CenterX = canvas.width / 2
 var GLOBAL_CenterY = canvas.height / 2
@@ -196,23 +187,29 @@ function POwO_getMouse(event)
     };
 }
 
-function POwO_Angle_Snap(inAngle)
+function POwO_Angle_Snap(inAngle) //in rad, not deg
 {
     let outAngle = inAngle
-    for(let i = POwO_Math_DegToRad(-180 - 7.5) ; i <  POwO_Math_DegToRad(-172.5 + 360) ; i += POwO_Math_DegToRad(15))
+    let singleArch = 2 * Math.PI / GLOBAL_ModulusSize
+    if (outAngle < 0){outAngle += 2 * Math.PI}
+
+    for(let i = - singleArch / 2 ; i < 2 * Math.PI + singleArch / 2 ; i += singleArch )
     {
-        if ( POwO_Math_IsInRange_Exclusive(i, outAngle , i + POwO_Math_DegToRad(15))){ outAngle = i + POwO_Math_DegToRad( 7.5 ) }
+        if (POwO_Math_IsInRange_Exclusive(i , outAngle, i + singleArch)){ outAngle = i + singleArch / 2 }
     }
+
     return outAngle;
 }
 
 function POwO_fromMousePosToAngle(inMouseX, inMouseY)
 {
     let temp_Angle = Math.atan2(GLOBAL_CenterY - inMouseY, inMouseX - GLOBAL_CenterX )
+    
     if (field_checkBox_snap.checked)
     {
         temp_Angle = POwO_Angle_Snap(temp_Angle)
     }
+    
     return temp_Angle
 }
 
@@ -234,8 +231,6 @@ function POwO_Kanvas_DrawTag(inX, inY, inW, inH, inR, inTagColor, inTextString, 
 
 function POwO_RedrawAll()
 {
-    
-
     let temp_deltaX = GLOBAL_RingRadius * Math.cos(GLOBAL_Angle)
     let temp_deltaY = Math.sin(GLOBAL_Angle) * GLOBAL_RingRadius
 
@@ -271,6 +266,7 @@ function POwO_RedrawAll()
     }
     
     //draw handles and the duplicated ones
+    let temp_prevCoord = [GLOBAL_CenterX + GLOBAL_RingRadius , GLOBAL_CenterY]
     for(let i = 0 ; i < GLOBAL_MarkCount ; i++)
     {
         let temp_i_angle = i * GLOBAL_Angle
@@ -280,16 +276,33 @@ function POwO_RedrawAll()
         ctx.beginPath();
         if (i === 1){ctx.lineWidth = 30}else{ctx.lineWidth = 0.01};
         ctx.fillStyle = '#FFC000';
-        ctx.strokeStyle = "rgba(255,192,0,0.25)"
+        ctx.strokeStyle = "rgba(255,192,0,0.5)"
         ctx.arc( GLOBAL_CenterX + temp_x , GLOBAL_CenterY - temp_y , GLOBAL_HandleRadius, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
+
+        //draw step chords
+        if (0 < i && GLOBAL_DrawStepChord)
+        {
+            ctx.beginPath()
+            ctx.strokeStyle = "rgba(255,192,0,0.25)"
+            ctx.lineWidth = 2
+            ctx.moveTo(temp_prevCoord[0],temp_prevCoord[1])
+            ctx.lineTo( GLOBAL_CenterX + temp_x, GLOBAL_CenterY - temp_y )
+            ctx.stroke()
+            temp_prevCoord = [GLOBAL_CenterX + temp_x, GLOBAL_CenterY - temp_y] //prepare for next iteration
+        }
 
         POwO_Kanvas_DrawTag(GLOBAL_CenterX + temp_x, GLOBAL_CenterY - temp_y, 50, 50,0, "rgba(0,0,0,0)",i.toString(),"#000","20px Calibri")
     }
 }
 
-
+function POwO_config()
+{
+    GLOBAL_ModulusSize = Number(field_textBox_ModulusSize.value)
+    GLOBAL_MarkCount = Number(field_textBox_MarkCount.value)
+    GLOBAL_DrawStepChord = field_checkBox_steps_Line.checked
+}
 
 
 
