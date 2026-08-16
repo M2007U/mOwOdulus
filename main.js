@@ -82,6 +82,7 @@ var field_checkBox_steps_Line = POwO_docgetel("field_checkBox_steps_Line");
 var field_checkBox_snap = POwO_docgetel("field_checkBox_snap")
 var field_textBox_ModulusSize = POwO_docgetel("field_textBox_Modulus")
 var field_textBox_MarkCount = POwO_docgetel("field_textBox_MarkCount");
+var field_textBox_AltRadius = POwO_docgetel("field_textBox_AltRadius")
 
 var GLOBAL_RingRadius = 320
 var GLOBAL_TickMarkSize = 25
@@ -93,6 +94,7 @@ var GLOBAL_TickMarkTextOffset = 50
 var GLOBAL_MarkCount = 16 // how many duplicates ?
 var GLOBAL_ModulusSize = 11 
 var GLOBAL_DrawStepChord = true
+var GLOBAL_AltRadius = 1
 
 var GLOBAL_CenterX = canvas.width / 2
 var GLOBAL_CenterY = canvas.height / 2
@@ -270,8 +272,9 @@ function POwO_RedrawAll()
     for(let i = 0 ; i < GLOBAL_MarkCount ; i++)
     {
         let temp_i_angle = i * GLOBAL_Angle
-        let temp_x = GLOBAL_RingRadius * Math.cos(temp_i_angle)
-        let temp_y = GLOBAL_RingRadius * Math.sin(temp_i_angle)
+        let temp_radius = POwO_Math_LERP(1, GLOBAL_AltRadius, i / Math.max(GLOBAL_MarkCount - 1,1)) * GLOBAL_RingRadius
+        let temp_x = temp_radius * Math.cos(temp_i_angle)
+        let temp_y = temp_radius * Math.sin(temp_i_angle)
 
         ctx.beginPath();
         if (i === 1){ctx.lineWidth = 30}else{ctx.lineWidth = 0.01};
@@ -302,6 +305,7 @@ function POwO_config()
     GLOBAL_ModulusSize = Number(field_textBox_ModulusSize.value)
     GLOBAL_MarkCount = Number(field_textBox_MarkCount.value)
     GLOBAL_DrawStepChord = field_checkBox_steps_Line.checked
+    GLOBAL_AltRadius = Number(field_textBox_AltRadius.value)
 }
 
 
